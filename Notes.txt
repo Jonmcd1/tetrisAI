@@ -1,0 +1,76 @@
+
+Utility variables:
+-The stationary board
+-The moving board
+-The user's score
+
+Classes to add:
+
+-Game:
+ -Functions:
+  -Tick: calls other ticks
+  -printBoard
+
+-Stationary board
+ -Functions:
+  -movingDone: when moving is done, check if any rows are full, if the board is topped out, etc, and add points + adjust the board + start the next moving board, or end the game
+
+-Moving board
+ -Functions:
+  -Generate random piece
+  -Tick: makes the piece go down and calls a bottom collision check, calls get user input
+  -Collision check(call in tick): if there's a bottom collision, trigger a change in stationary board and wipe the moving board
+  -Clear: clears the moving board
+
+-Piece
+ -Functions:
+  -Rotate: rotates the piece
+  -isValidRotation: checks if the piece can be rotated(called in Rotate)
+ -Values:
+  -Current Piece: an int representing the piece that was generated(I, L, T, S, Z, B(Block))
+
+-Move
+ -Functions:
+  -Get user input
+  -Side collision check: if there's a side collision, the move is not valid
+  -Bottom collision check: same as movingBoard::collisionCheck
+
+
+
+
+Running generations pseudocode:
+
+char possibleMoveCombos[num][num]
+	This is an array of lists of possible moves; covers all positions at all rotations
+
+for <num generations to run (idk, 100000?)>:
+	for <each individual in the generation>:
+		create a game for the individual to play
+		for <num moves to make before ending the individual's trial(250)>:
+			if the game is lost, do nothing, otherwise:
+			findBestMove()
+			makeMove
+		record the individual's score
+	update the AI's genVals:
+		do this by finding the top 6 and reproducing; use created functions for this
+	reset the AI's genScores:
+		just set them all to 0
+
+
+findBestMove(Game game, int currIndivIndex):
+	int currBestMoveCombo
+	double currLowestCost = 10000000
+
+	for <len(possibleMoveCombos)>:
+		create a game in which the hypothetical move will be made
+		set this game to be identical to the current real one
+		use possibleMoveCombos[i] to make the move in the hypothetical game
+		if invalid move is triggered, forget the move; otherwise
+		use evaluatePosition to find the cost of the move
+		if the cost is lower than currLowestCost, set it amd set currBestMoveCombo to i
+
+	return i
+
+makeMove:
+	apply possibleMoveCombos[i] using the i found by findBestMove to make a move in the real game
+	NOT A FUNCTION; just do it in the code
